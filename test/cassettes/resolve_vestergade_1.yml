@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://adressevaelger.dk/husnumre/0a3f507b-24a4-32b8-e044-0003ba298018?token=<ADRESSEVAELGER_TOKEN>
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Sjakro/address-dar
+      Host:
+      - adressevaelger.dk
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Powered-By:
+      - Express
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1913'
+      Etag:
+      - W/"779-ihsoWt0TE9NRpMElJe7VY9KPj+A"
+      Date:
+      - Tue, 29 Sep 2026 12:34:57 GMT
+      X-Varnish:
+      - '689083878'
+      Age:
+      - '0'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload;
+      X-Proxy:
+      - varnish-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Security-Policy:
+      - frame-ancestors 'self'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJzdGF0dXMiOiJvayIsImh1c251bW1lciI6eyJpZF9sb2thbGlkIjoiMGEzZjUwN2ItMjRhNC0zMmI4LWUwNDQtMDAwM2JhMjk4MDE4IiwiaHVzbnVtbWVydGVrc3QiOiIxIiwiYWRnYW5nc2FkcmVzc2ViZXRlZ25lbHNlIjoiVmVzdGVyZ2FkZSAxLCAxNDU2IEvDuGJlbmhhdm4gSyIsInZlam5hdm4iOiJWZXN0ZXJnYWRlIiwic3RhdHVzIjoiMyIsInZpcmtuaW5nZnJhIjoiMjAyNS0wOC0yMVQxODowNzo1OC45MTNaIiwidmlya25pbmd0aWwiOm51bGwsInJlZ2lzdHJlcmluZ2ZyYSI6IjIwMjUtMDgtMjFUMTg6MDc6NTguOTEzWiIsInJlZ2lzdHJlcmluZ3RpbCI6bnVsbCwiYWRnYW5nc3B1bmt0Ijp7ImlkX2xva2FsaWQiOiIwYTNmNTA3Yi0yNGE0LTMyYjgtZTA0NC0wMDAzYmEyOTgwMTgiLCJzdGF0dXMiOiI4Iiwidmlya25pbmdmcmEiOiIyMDA5LTExLTI1VDAwOjA3OjM3KzAwOjAwIiwidmlya25pbmd0aWwiOm51bGwsInJlZ2lzdHJlcmluZ2ZyYSI6IjIwMTgtMDUtMDNUMTY6NTg6MzQrMDA6MDAiLCJyZWdpc3RyZXJpbmd0aWwiOm51bGwsImdlb21ldHJpIjp7InR5cGUiOiJQb2ludCIsImNycyI6eyJ0eXBlIjoibmFtZSIsInByb3BlcnRpZXMiOnsibmFtZSI6IkVQU0c6MjU4MzIifX0sImNvb3JkaW5hdGVzIjpbNzI0NTMzLjA3LDYxNzYwMjYuODRdfSwia29vcmRpbmF0ZXIiOnsieCI6NzI0NTMzLjA3LCJ5Ijo2MTc2MDI2Ljg0fX0sInBvc3RudW1tZXIiOnsiaWRfbG9rYWxpZCI6IjYwMjA4NGY3LTE5MjEtNDZiNi1iOGI5LTcwNmY1NzUxYWMzZCIsIm5hdm4iOiJLw7hiZW5oYXZuIEsiLCJwb3N0bnIiOiIxNDU2Iiwic3RhdHVzIjoiMyIsInZpcmtuaW5nZnJhIjoiMjAyMy0wMy0yNFQxNzo1MTo0Ni4yMDk1MDUrMDA6MDAiLCJ2aXJrbmluZ3RpbCI6bnVsbCwicmVnaXN0cmVyaW5nZnJhIjoiMjAyMy0wMy0yNFQxNzo1MTo0Ni4yMDk1MDUrMDA6MDAiLCJyZWdpc3RyZXJpbmd0aWwiOm51bGx9LCJuYXZuZ2l2ZW52ZWoiOnsiaWRfbG9rYWxpZCI6ImMyMjg1MzljLWEyMzAtNDBkOS1iMjU3LTA1OWUwNzk2MTI4NyIsInZlam5hdm4iOiJWZXN0ZXJnYWRlIiwidmlya25pbmdmcmEiOiIyMDIyLTAxLTA1VDAwOjAyOjUxLjIzMDI0MSswMDowMCIsInZpcmtuaW5ndGlsIjpudWxsLCJyZWdpc3RyZXJpbmdmcmEiOiIyMDIyLTAxLTA1VDAwOjAyOjUxLjIzMDI0MSswMDowMCIsInJlZ2lzdHJlcmluZ3RpbCI6bnVsbH0sIm5hdm5naXZlbnZlamtvbW11bmVkZWwiOnsiaWRfbG9rYWxpZCI6IjVjOTliMWU2LTRlYWUtMTFlOC05M2ZkLTA2NmNmZjI0ZDYzNyIsImtvbW11bmUiOiIwMTAxIiwidmVqa29kZSI6IjgyMTYiLCJuYXZuZ2l2ZW52ZWoiOiJjMjI4NTM5Yy1hMjMwLTQwZDktYjI1Ny0wNTllMDc5NjEyODciLCJ2aXJrbmluZ2ZyYSI6IjIwMjItMDEtMDVUMDA6MDI6NTEuMjMwMjQxKzAwOjAwIiwidmlya25pbmd0aWwiOm51bGwsInJlZ2lzdHJlcmluZ2ZyYSI6IjIwMjItMDEtMDVUMDA6MDI6NTEuMjMwMjQxKzAwOjAwIiwicmVnaXN0cmVyaW5ndGlsIjpudWxsfSwibmF2bmdpdmVudmVqcG9zdG51bW1lciI6eyJpZF9sb2thbGlkIjoiZDgwNWQwMTUtYWRjZi00Zjk0LTliY2ItN2ZhYjEzY2M4Y2JkIiwidmlya25pbmdmcmEiOiIyMDIwLTEyLTE4VDE1OjE3OjE5LjAwMDc3NCswMDowMCIsInZpcmtuaW5ndGlsIjpudWxsLCJyZWdpc3RyZXJpbmdmcmEiOiIyMDIwLTEyLTE4VDE1OjE3OjE5LjAwMDc3NCswMDowMCIsInJlZ2lzdHJlcmluZ3RpbCI6bnVsbH0sInN1cHBsZXJlbmRlYnluYXZuIjp7ImlkX2xva2FsaWQiOm51bGwsInN0YXR1cyI6bnVsbCwic3VwcGxlcmVuZGVieW5hdm4iOm51bGwsIm5hdm4iOm51bGwsInZpcmtuaW5nZnJhIjpudWxsLCJ2aXJrbmluZ3RpbCI6bnVsbCwicmVnaXN0cmVyaW5nZnJhIjpudWxsLCJyZWdpc3RyZXJpbmd0aWwiOm51bGx9fX0=
+  recorded_at: Tue, 29 Sep 2026 12:34:57 GMT
+recorded_with: VCR 6.4.0
