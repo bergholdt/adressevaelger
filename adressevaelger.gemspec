@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir.chdir(__dir__) do
     `git ls-files -z`.split("\x0").reject do |f|
-      f.start_with?(*%w[bin/ test/ .git Gemfile Rakefile])
+      f.start_with?(*%w[bin/ test/ .git .github Gemfile Rakefile])
     end
   end
   spec.require_paths = ["lib"]
