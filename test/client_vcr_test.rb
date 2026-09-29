@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-# Integration-style: replay recorded Adressevælger HTTP (copied from Sjakro).
+# Integration-style: replay recorded Adressevælger HTTP.
 # Re-record: `VCR_RECORD=all bundle exec rake test TEST=test/client_vcr_test.rb`
 # Never hand-write cassette bodies.
 class ClientVcrTest < Minitest::Test
