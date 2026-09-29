@@ -17,7 +17,7 @@ jobs:
       matrix:
         ruby: ["3.3", "3.4", "4.0"]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Install PROJ (optional rgeo-proj4)
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libproj-dev
       - name: Set up Ruby
