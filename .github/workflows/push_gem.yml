@@ -26,6 +26,8 @@ jobs:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
+      - name: Install PROJ (optional rgeo-proj4)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libproj-dev
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
