@@ -52,6 +52,29 @@ module Adressevaelger
       build_resolved(payload, type: type.to_s)
     end
 
+    # Wash / validate a free-text address via Adressevask (`/vask/`).
+    def validate(text)
+      return [] if blank?(text)
+
+      payload = get_json("/vask/", adresse: text)
+      results = Array(payload["resultater"] || payload["fund"] || payload["adresser"])
+      results.filter_map do |row|
+        id = row["adresse_id_lokalid"] || row["id"] || dig_hash(row, "adresse", "id")
+        label = row["betegnelse"] || row["titel"] || row["adressebetegnelse"]
+        next if blank?(id) || blank?(label)
+
+        Suggestion.new(
+          id: id,
+          type: present_string(row["type"]) || "adresse",
+          label: label,
+          provider: Adressevaelger::PROVIDER
+        )
+      end
+    end
+
+    # Alias matching the Adressevask product name.
+    alias vask validate
+
     private
 
       attr_reader :http
