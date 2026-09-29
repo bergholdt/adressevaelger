@@ -5,6 +5,7 @@ require "json"
 require "uri"
 
 require_relative "suggestion"
+require_relative "resolved_address"
 
 module Adressevaelger
   # HTTP client for Klimadatastyrelsen Adressevælger (+ Adressevask).
@@ -40,9 +41,113 @@ module Adressevaelger
     # Alias used by callers that think in "search" terms.
     alias search autocomplete
 
+    # Resolve a husnummer or adresse by DAR id.
+    def resolve(id:, type: "husnummer")
+      path = case type.to_s
+      when "adresse" then "/adresser/#{id}"
+      else "/husnumre/#{id}"
+      end
+
+      payload = get_json(path)
+      build_resolved(payload, type: type.to_s)
+    end
+
     private
 
       attr_reader :http
+
+      def build_resolved(payload, type:)
+        data = nested_entity(payload)
+        vejnavn = scalar(pick(data, "vejnavn")) || dig_hash(data, "vejstykke", "navn") || dig_hash(data, "navngivenvej", "vejnavn")
+        husnr = scalar(pick(data, "husnr", "husnummertekst", "husnummer"))
+        postal = scalar(pick(data, "postnr")) || dig_hash(data, "postnummer", "postnr") || dig_hash(data, "postnummer", "nr")
+        city = scalar(pick(data, "postnrnavn", "bynavn")) || dig_hash(data, "postnummer", "navn")
+        etage = scalar(pick(data, "etagebetegnelse", "etage"))
+        doer = scalar(pick(data, "doerbetegnelse", "dør", "doer"))
+
+        point = data["adgangspunkt"] || dig_hash(data, "adgangsadresse", "adgangspunkt") || data["position"]
+        easting, northing = extract_etrs89(point)
+        latitude, longitude = transform_etrs89(easting, northing)
+
+        id = pick(data, "id", "id_lokalid")
+        husnummer_id = pick(data, "husnummer_id", "adgangsadresseid") || (type == "husnummer" ? id : nil)
+        adresse_id = type == "adresse" ? id : pick(data, "adresse_id")
+
+        ResolvedAddress.new(
+          line1: [vejnavn, husnr].compact.reject { |part| blank?(part) }.join(" "),
+          line2: nil,
+          postal_code: postal.to_s,
+          city: city.to_s,
+          country: "DK",
+          etage: etage,
+          doer: doer,
+          address_provider: Adressevaelger::PROVIDER,
+          external_address_id: adresse_id || husnummer_id,
+          external_building_id: husnummer_id,
+          latitude: latitude,
+          longitude: longitude,
+          coord_easting: easting,
+          coord_northing: northing,
+          coord_epsg: easting ? EPSG : nil
+        )
+      end
+
+      def nested_entity(payload)
+        %w[data husnummer adresse].each do |key|
+          value = payload[key]
+          return value if value.is_a?(Hash)
+        end
+        payload
+      end
+
+      def pick(hash, *keys)
+        keys.each do |key|
+          value = hash[key]
+          return value if present?(value)
+        end
+        nil
+      end
+
+      def dig_hash(hash, *keys)
+        return nil unless hash.is_a?(Hash)
+
+        hash.dig(*keys)
+      end
+
+      def scalar(value)
+        return nil if blank?(value) || value.is_a?(Hash) || value.is_a?(Array)
+
+        value
+      end
+
+      def extract_etrs89(point)
+        return [nil, nil] if blank?(point)
+
+        if point.is_a?(Array) && point.size >= 2
+          return [point[0].to_f, point[1].to_f]
+        end
+
+        coords = point["koordinater"] || point["coordinates"] || point["position"] || dig_hash(point, "geometri", "coordinates")
+        if coords.is_a?(Array) && coords.size >= 2
+          return [coords[0].to_f, coords[1].to_f]
+        end
+        if coords.is_a?(Hash)
+          easting = coords["x"] || coords["øst"] || coords["oest"] || coords["easting"]
+          northing = coords["y"] || coords["nord"] || coords["northing"]
+          return [easting.to_f, northing.to_f] if present?(easting) && present?(northing)
+        end
+
+        easting = point["øst"] || point["oest"] || point["easting"] || point["x"]
+        northing = point["nord"] || point["northing"] || point["y"]
+        return [nil, nil] if blank?(easting) || blank?(northing)
+
+        [easting.to_f, northing.to_f]
+      end
+
+      # Wired in a later commit when the optional PROJ helper is available.
+      def transform_etrs89(_easting, _northing)
+        [nil, nil]
+      end
 
       def get_json(path, params = {})
         uri = URI.join("#{base_url}/", path.delete_prefix("/"))
