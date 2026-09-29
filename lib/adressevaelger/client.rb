@@ -167,9 +167,11 @@ module Adressevaelger
         [easting.to_f, northing.to_f]
       end
 
-      # Wired in a later commit when the optional PROJ helper is available.
-      def transform_etrs89(_easting, _northing)
-        [nil, nil]
+      # Wired when optional rgeo-proj4 / PROJ is available; otherwise leave WGS84 nil.
+      def transform_etrs89(easting, northing)
+        return [nil, nil] if easting.nil? || northing.nil?
+
+        Adressevaelger::Etrs89ToWgs84.call(easting: easting, northing: northing) || [nil, nil]
       end
 
       def get_json(path, params = {})
