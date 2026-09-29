@@ -19,7 +19,7 @@ bundle add adressevaelger
 # or: gem install adressevaelger
 ```
 
-Requires Ruby 3.2+. No Rails dependency.
+Requires Ruby 3.3+. No Rails dependency.
 
 ## Usage
 
