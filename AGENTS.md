@@ -4,7 +4,7 @@ Public README is for gem users. Keep maintainer checklists and rejected scope ou
 
 ## Security
 
-Do not use Aikido. This public repo uses GitHub: CodeQL (`.github/workflows/codeql.yml`), Dependabot (`.github/dependabot.yml`), secret scanning, and security advisories (`.github/SECURITY.md`).
+CodeQL (`.github/workflows/codeql.yml`), Dependabot (`.github/dependabot.yml`), secret scanning, and security advisories (`.github/SECURITY.md`).
 
 ## Test
 
