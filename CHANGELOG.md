@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add RuboCop lint job and shared style config in CI.
+
 ## 0.1.0
 
 - Initial public release: Adressevælger client (`autocomplete` / `search`),

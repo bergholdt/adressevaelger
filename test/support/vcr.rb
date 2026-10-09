@@ -28,7 +28,9 @@ VCR.configure do |config|
     match_requests_on: [:method, VCR.request_matchers.uri_without_param(:token)]
   }
 
-  config.filter_sensitive_data("<ADRESSEVAELGER_TOKEN>") { ENV["ADRESSEVAELGER_TOKEN"] if ENV["ADRESSEVAELGER_TOKEN"] && !ENV["ADRESSEVAELGER_TOKEN"].empty? }
+  config.filter_sensitive_data("<ADRESSEVAELGER_TOKEN>") do
+    ENV["ADRESSEVAELGER_TOKEN"] if ENV["ADRESSEVAELGER_TOKEN"] && !ENV["ADRESSEVAELGER_TOKEN"].empty?
+  end
   config.filter_sensitive_data("<ADRESSEVAELGER_TOKEN>") { Adressevaelger::Client::DEFAULT_TOKEN }
 
   config.before_record do |interaction|

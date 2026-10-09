@@ -75,6 +75,7 @@ production**. Obtain a proper token via [Dataforsyningen](https://dataforsyninge
 
 ```sh
 bundle exec rake test
+bundle exec rake rubocop
 ```
 
 HTTP integration tests use [VCR](https://github.com/vcr/vcr) cassettes recorded
