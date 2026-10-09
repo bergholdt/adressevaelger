@@ -1,8 +1,7 @@
 # Adressevaelger
 
 Ruby client for Klimadatastyrelsen **Adressevælger** and **Adressevask**
-(Danmarks Adresseregister / DAR). Denmark only — no multi-country router,
-manual entry adapter, or commercial geocoder fallback.
+(Danmarks Adresseregister / DAR).
 
 ## Install
 
@@ -88,14 +87,6 @@ VCR_RECORD=all bundle exec rake test TEST=test/client_vcr_test.rb
 
 Never hand-write cassette response bodies.
 
-## Scope
-
-**In:** Adressevælger search/autocomplete, resolve by husnummer/adresse id,
-Adressevask validate, optional PROJ transform.
-
-**Out:** Multi-country routing, Manual adapters, commercial fallback geocoders,
-Rails controllers/Stimulus, CRM persistence helpers.
-
 ## Attribution
 
 Address data via [Dataforsyningen](https://dataforsyningen.dk/) /
@@ -103,8 +94,6 @@ Klimadatastyrelsen Adressevælger and Adressevask. This gem is an independent
 open-source client and is not affiliated with or endorsed by Klimadatastyrelsen.
 
 ## Releasing
-
-Version bumps are intentional — CI does not auto-bump on every `main` push.
 
 1. Bump `Adressevaelger::VERSION` in `lib/adressevaelger/version.rb` (gemspec reads it).
 2. Update `CHANGELOG.md` for that version.
@@ -115,27 +104,6 @@ Version bumps are intentional — CI does not auto-bump on every `main` push.
    [push_gem](.github/workflows/push_gem.yml) workflow verifies this, then
    publishes via [RubyGems Trusted Publishing](https://guides.rubygems.org/trusted-publishing/)
    (`rubygems/release-gem`, OIDC — no `RUBYGEMS_API_KEY` secret).
-
-### One-time RubyGems Trusted Publisher setup
-
-The gem is not on RubyGems yet, so use a **pending** trusted publisher
-(Rasmus must click through the UI; no credentials belong in this repo):
-
-1. Sign in at [rubygems.org](https://rubygems.org/) (MFA on).
-2. Open [Pending trusted publishers](https://rubygems.org/profile/oidc/pending_trusted_publishers).
-3. Click **Create**.
-4. Fill in:
-   - **Gem name:** `adressevaelger`
-   - **Repository owner:** `bergholdt`
-   - **Repository name:** `adressevaelger`
-   - **Workflow filename:** `push_gem.yml`
-   - **Environment name:** `release`
-5. Click **Create Pending trusted publisher**.
-6. In GitHub → repo **Settings → Environments**, create an environment named
-   `release` (no required reviewers needed for a solo maintainer).
-
-After the first successful tag-triggered publish, the pending publisher becomes
-a normal trusted publisher and you own the gem on RubyGems.org.
 
 ## License
 
