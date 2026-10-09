@@ -16,13 +16,14 @@ module Adressevaelger
     # this shared demo token for exploration — replace it in production.
     DEFAULT_TOKEN = "adressevaelger123"
     DEFAULT_BASE_URL = "https://adressevaelger.dk"
-    EPSG = 25832
+    EPSG = 25_832
 
     attr_reader :base_url, :token
 
     def initialize(token: nil, base_url: nil, http: nil)
-      @token = present_string(token) || present_string(ENV["ADRESSEVAELGER_TOKEN"]) || DEFAULT_TOKEN
-      @base_url = present_string(base_url) || present_string(ENV["ADRESSEVAELGER_BASE_URL"]) || DEFAULT_BASE_URL
+      @token = present_string(token) || present_string(ENV.fetch("ADRESSEVAELGER_TOKEN", nil)) || DEFAULT_TOKEN
+      @base_url = present_string(base_url) || present_string(ENV.fetch("ADRESSEVAELGER_BASE_URL",
+                                                                       nil)) || DEFAULT_BASE_URL
       @http = http
     end
 
@@ -44,9 +45,9 @@ module Adressevaelger
     # Resolve a husnummer or adresse by DAR id.
     def resolve(id:, type: "husnummer")
       path = case type.to_s
-      when "adresse" then "/adresser/#{id}"
-      else "/husnumre/#{id}"
-      end
+             when "adresse" then "/adresser/#{id}"
+             else "/husnumre/#{id}"
+             end
 
       payload = get_json(path)
       build_resolved(payload, type: type.to_s)
@@ -77,147 +78,147 @@ module Adressevaelger
 
     private
 
-      attr_reader :http
+    attr_reader :http
 
-      def build_resolved(payload, type:)
-        data = nested_entity(payload)
-        vejnavn = scalar(pick(data, "vejnavn")) || dig_hash(data, "vejstykke", "navn") || dig_hash(data, "navngivenvej", "vejnavn")
-        husnr = scalar(pick(data, "husnr", "husnummertekst", "husnummer"))
-        postal = scalar(pick(data, "postnr")) || dig_hash(data, "postnummer", "postnr") || dig_hash(data, "postnummer", "nr")
-        city = scalar(pick(data, "postnrnavn", "bynavn")) || dig_hash(data, "postnummer", "navn")
-        etage = scalar(pick(data, "etagebetegnelse", "etage"))
-        doer = scalar(pick(data, "doerbetegnelse", "dør", "doer"))
+    def build_resolved(payload, type:)
+      data = nested_entity(payload)
+      vejnavn = scalar(pick(data,
+                            "vejnavn")) || dig_hash(data, "vejstykke",
+                                                    "navn") || dig_hash(data, "navngivenvej", "vejnavn")
+      husnr = scalar(pick(data, "husnr", "husnummertekst", "husnummer"))
+      postal = scalar(pick(data,
+                           "postnr")) || dig_hash(data, "postnummer", "postnr") || dig_hash(data, "postnummer", "nr")
+      city = scalar(pick(data, "postnrnavn", "bynavn")) || dig_hash(data, "postnummer", "navn")
+      etage = scalar(pick(data, "etagebetegnelse", "etage"))
+      doer = scalar(pick(data, "doerbetegnelse", "dør", "doer"))
 
-        point = data["adgangspunkt"] || dig_hash(data, "adgangsadresse", "adgangspunkt") || data["position"]
-        easting, northing = extract_etrs89(point)
-        latitude, longitude = transform_etrs89(easting, northing)
+      point = data["adgangspunkt"] || dig_hash(data, "adgangsadresse", "adgangspunkt") || data["position"]
+      easting, northing = extract_etrs89(point)
+      latitude, longitude = transform_etrs89(easting, northing)
 
-        id = pick(data, "id", "id_lokalid")
-        husnummer_id = pick(data, "husnummer_id", "adgangsadresseid") || (type == "husnummer" ? id : nil)
-        adresse_id = type == "adresse" ? id : pick(data, "adresse_id")
+      id = pick(data, "id", "id_lokalid")
+      husnummer_id = pick(data, "husnummer_id", "adgangsadresseid") || (type == "husnummer" ? id : nil)
+      adresse_id = type == "adresse" ? id : pick(data, "adresse_id")
 
-        ResolvedAddress.new(
-          line1: [vejnavn, husnr].compact.reject { |part| blank?(part) }.join(" "),
-          line2: nil,
-          postal_code: postal.to_s,
-          city: city.to_s,
-          country: "DK",
-          etage: etage,
-          doer: doer,
-          address_provider: Adressevaelger::PROVIDER,
-          external_address_id: adresse_id || husnummer_id,
-          external_building_id: husnummer_id,
-          latitude: latitude,
-          longitude: longitude,
-          coord_easting: easting,
-          coord_northing: northing,
-          coord_epsg: easting ? EPSG : nil
-        )
+      ResolvedAddress.new(
+        line1: [vejnavn, husnr].compact.reject { |part| blank?(part) }.join(" "),
+        line2: nil,
+        postal_code: postal.to_s,
+        city: city.to_s,
+        country: "DK",
+        etage: etage,
+        doer: doer,
+        address_provider: Adressevaelger::PROVIDER,
+        external_address_id: adresse_id || husnummer_id,
+        external_building_id: husnummer_id,
+        latitude: latitude,
+        longitude: longitude,
+        coord_easting: easting,
+        coord_northing: northing,
+        coord_epsg: easting ? EPSG : nil
+      )
+    end
+
+    def nested_entity(payload)
+      %w[data husnummer adresse].each do |key|
+        value = payload[key]
+        return value if value.is_a?(Hash)
+      end
+      payload
+    end
+
+    def pick(hash, *keys)
+      keys.each do |key|
+        value = hash[key]
+        return value if present?(value)
+      end
+      nil
+    end
+
+    def dig_hash(hash, *keys)
+      return nil unless hash.is_a?(Hash)
+
+      hash.dig(*keys)
+    end
+
+    def scalar(value)
+      return nil if blank?(value) || value.is_a?(Hash) || value.is_a?(Array)
+
+      value
+    end
+
+    def extract_etrs89(point)
+      return [nil, nil] if blank?(point)
+
+      return [point[0].to_f, point[1].to_f] if point.is_a?(Array) && point.size >= 2
+
+      coords = point["koordinater"] || point["coordinates"] || point["position"] || dig_hash(point, "geometri",
+                                                                                             "coordinates")
+      return [coords[0].to_f, coords[1].to_f] if coords.is_a?(Array) && coords.size >= 2
+
+      if coords.is_a?(Hash)
+        easting = coords["x"] || coords["øst"] || coords["oest"] || coords["easting"]
+        northing = coords["y"] || coords["nord"] || coords["northing"]
+        return [easting.to_f, northing.to_f] if present?(easting) && present?(northing)
       end
 
-      def nested_entity(payload)
-        %w[data husnummer adresse].each do |key|
-          value = payload[key]
-          return value if value.is_a?(Hash)
-        end
-        payload
-      end
+      easting = point["øst"] || point["oest"] || point["easting"] || point["x"]
+      northing = point["nord"] || point["northing"] || point["y"]
+      return [nil, nil] if blank?(easting) || blank?(northing)
 
-      def pick(hash, *keys)
-        keys.each do |key|
-          value = hash[key]
-          return value if present?(value)
-        end
-        nil
-      end
+      [easting.to_f, northing.to_f]
+    end
 
-      def dig_hash(hash, *keys)
-        return nil unless hash.is_a?(Hash)
+    # Wired when optional rgeo-proj4 / PROJ is available; otherwise leave WGS84 nil.
+    def transform_etrs89(easting, northing)
+      return [nil, nil] if easting.nil? || northing.nil?
 
-        hash.dig(*keys)
-      end
+      Adressevaelger::Etrs89ToWgs84.call(easting: easting, northing: northing) || [nil, nil]
+    end
 
-      def scalar(value)
-        return nil if blank?(value) || value.is_a?(Hash) || value.is_a?(Array)
+    def get_json(path, params = {})
+      uri = URI.join("#{base_url}/", path.delete_prefix("/"))
+      query = params.merge(token: token).compact
+      uri.query = URI.encode_www_form(query)
 
-        value
-      end
+      request = Net::HTTP::Get.new(uri)
+      request["Accept"] = "application/json"
+      request["User-Agent"] = "Adressevaelger/#{VERSION}"
 
-      def extract_etrs89(point)
-        return [nil, nil] if blank?(point)
+      response = perform(uri, request)
+      raise ProviderError, "Adressevælger error (#{response.code})" unless response.is_a?(Net::HTTPSuccess)
 
-        if point.is_a?(Array) && point.size >= 2
-          return [point[0].to_f, point[1].to_f]
-        end
-
-        coords = point["koordinater"] || point["coordinates"] || point["position"] || dig_hash(point, "geometri", "coordinates")
-        if coords.is_a?(Array) && coords.size >= 2
-          return [coords[0].to_f, coords[1].to_f]
-        end
-        if coords.is_a?(Hash)
-          easting = coords["x"] || coords["øst"] || coords["oest"] || coords["easting"]
-          northing = coords["y"] || coords["nord"] || coords["northing"]
-          return [easting.to_f, northing.to_f] if present?(easting) && present?(northing)
-        end
-
-        easting = point["øst"] || point["oest"] || point["easting"] || point["x"]
-        northing = point["nord"] || point["northing"] || point["y"]
-        return [nil, nil] if blank?(easting) || blank?(northing)
-
-        [easting.to_f, northing.to_f]
-      end
-
-      # Wired when optional rgeo-proj4 / PROJ is available; otherwise leave WGS84 nil.
-      def transform_etrs89(easting, northing)
-        return [nil, nil] if easting.nil? || northing.nil?
-
-        Adressevaelger::Etrs89ToWgs84.call(easting: easting, northing: northing) || [nil, nil]
-      end
-
-      def get_json(path, params = {})
-        uri = URI.join("#{base_url}/", path.delete_prefix("/"))
-        query = params.merge(token: token).compact
-        uri.query = URI.encode_www_form(query)
-
-        request = Net::HTTP::Get.new(uri)
-        request["Accept"] = "application/json"
-        request["User-Agent"] = "Adressevaelger/#{VERSION}"
-
-        response = perform(uri, request)
-        unless response.is_a?(Net::HTTPSuccess)
-          raise ProviderError, "Adressevælger error (#{response.code})"
-        end
-
+      begin
         JSON.parse(response.body)
       rescue JSON::ParserError
         raise ProviderError, "Adressevælger returned invalid JSON"
       end
+    end
 
-      def perform(uri, request)
-        if http
-          return http.call(uri, request)
-        end
+    def perform(uri, request)
+      return http.call(uri, request) if http
 
-        Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https", open_timeout: 5, read_timeout: 10) do |client|
-          client.request(request)
-        end
-      rescue Net::OpenTimeout, Net::ReadTimeout, Errno::ECONNREFUSED, SocketError, Socket::ResolutionError => e
-        raise ProviderError, "Adressevælger unreachable (#{e.class})"
+      Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https", open_timeout: 5,
+                                          read_timeout: 10) do |client|
+        client.request(request)
       end
+    rescue Net::OpenTimeout, Net::ReadTimeout, Errno::ECONNREFUSED, SocketError => e
+      raise ProviderError, "Adressevælger unreachable (#{e.class})"
+    end
 
-      def blank?(value)
-        value.nil? || (value.respond_to?(:empty?) && value.empty?) ||
-          (value.is_a?(String) && value.strip.empty?)
-      end
+    def blank?(value)
+      value.nil? || (value.respond_to?(:empty?) && value.empty?) ||
+        (value.is_a?(String) && value.strip.empty?)
+    end
 
-      def present?(value)
-        !blank?(value)
-      end
+    def present?(value)
+      !blank?(value)
+    end
 
-      def present_string(value)
-        return nil if blank?(value)
+    def present_string(value)
+      return nil if blank?(value)
 
-        value.to_s
-      end
+      value.to_s
+    end
   end
 end

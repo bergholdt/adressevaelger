@@ -7,6 +7,7 @@ require "net/http"
 class ClientValidateTest < Minitest::Test
   def test_validate_returns_empty_for_blank_text
     client = Adressevaelger::Client.new(http: ->(*) { flunk "should not call HTTP" })
+
     assert_equal [], client.validate("")
     assert_equal [], client.validate(nil)
   end
@@ -45,9 +46,9 @@ class ClientValidateTest < Minitest::Test
 
   private
 
-    def ok_json(payload)
-      Net::HTTPOK.new("1.1", "200", "OK").tap do |response|
-        response.define_singleton_method(:body) { JSON.generate(payload) }
-      end
+  def ok_json(payload)
+    Net::HTTPOK.new("1.1", "200", "OK").tap do |response|
+      response.define_singleton_method(:body) { JSON.generate(payload) }
     end
+  end
 end

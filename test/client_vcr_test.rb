@@ -29,7 +29,7 @@ class ClientVcrTest < Minitest::Test
       assert_equal "adressevaelger", resolved.address_provider
       refute_nil resolved.coord_easting
       refute_nil resolved.coord_northing
-      assert_equal 25832, resolved.coord_epsg
+      assert_equal 25_832, resolved.coord_epsg
 
       if Adressevaelger::Etrs89ToWgs84.available?
         refute_nil resolved.latitude

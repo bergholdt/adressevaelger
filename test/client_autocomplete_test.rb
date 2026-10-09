@@ -11,6 +11,7 @@ class ClientAutocompleteTest < Minitest::Test
 
   def test_autocomplete_returns_empty_for_short_query
     client = Adressevaelger::Client.new(http: ->(*) { flunk "should not call HTTP" })
+
     assert_equal [], client.autocomplete("ab")
     assert_equal [], client.autocomplete("")
     assert_equal [], client.autocomplete(nil)
@@ -66,9 +67,9 @@ class ClientAutocompleteTest < Minitest::Test
 
   private
 
-    def ok_json(payload)
-      Net::HTTPOK.new("1.1", "200", "OK").tap do |response|
-        response.define_singleton_method(:body) { JSON.generate(payload) }
-      end
+  def ok_json(payload)
+    Net::HTTPOK.new("1.1", "200", "OK").tap do |response|
+      response.define_singleton_method(:body) { JSON.generate(payload) }
     end
+  end
 end

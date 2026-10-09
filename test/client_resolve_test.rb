@@ -35,7 +35,7 @@ class ClientResolveTest < Minitest::Test
     assert_equal VESTERGADE_1_ID, resolved.external_building_id
     assert_in_delta 724_533.07, resolved.coord_easting, 0.01
     assert_in_delta 6_176_026.84, resolved.coord_northing, 0.01
-    assert_equal 25832, resolved.coord_epsg
+    assert_equal 25_832, resolved.coord_epsg
   end
 
   def test_resolve_adresse_uses_adresser_path
@@ -66,9 +66,9 @@ class ClientResolveTest < Minitest::Test
 
   private
 
-    def ok_json(payload)
-      Net::HTTPOK.new("1.1", "200", "OK").tap do |response|
-        response.define_singleton_method(:body) { JSON.generate(payload) }
-      end
+  def ok_json(payload)
+    Net::HTTPOK.new("1.1", "200", "OK").tap do |response|
+      response.define_singleton_method(:body) { JSON.generate(payload) }
     end
+  end
 end

@@ -13,7 +13,7 @@ module Adressevaelger
 
       begin
         require "rgeo/proj4"
-        @source = RGeo::CoordSys::Proj4.create(25832)
+        @source = RGeo::CoordSys::Proj4.create(25_832)
         @target = RGeo::CoordSys::Proj4.create(4326)
         @available = true
       rescue LoadError, StandardError

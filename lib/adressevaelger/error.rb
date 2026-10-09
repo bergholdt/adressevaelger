@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 module Adressevaelger
-  Error = Class.new(StandardError)
+  class Error < StandardError
+  end
+
   # Raised when the Adressevælger HTTP API fails, returns invalid JSON, or is unreachable.
-  ProviderError = Class.new(Error)
+  class ProviderError < Error
+  end
 end
