@@ -2,6 +2,10 @@
 
 Public README is for gem users. Keep maintainer checklists and rejected scope out of it.
 
+## Git
+
+Changes always go through a pull request on a feature branch. Never push directly to `main`. Merge only after CI is green.
+
 ## Security
 
 Do not use Aikido. This public repo uses GitHub: CodeQL (`.github/workflows/codeql.yml`), Dependabot (`.github/dependabot.yml`), secret scanning, and security advisories (`.github/SECURITY.md`).
