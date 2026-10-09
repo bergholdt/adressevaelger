@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.1.1
 
-- Add RuboCop lint job and shared style config in CI.
+- Add RuboCop lint job and shared style config in CI. No public API changes.
 
 ## 0.1.0
 
