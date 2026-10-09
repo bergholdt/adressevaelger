@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Adressevaelger
-  # Provider-shaped resolved Danish address (no host-app persistence helpers).
+  # Resolved Danish address from Adressevælger.
   ResolvedAddress = Data.define(
     :line1,
     :line2,

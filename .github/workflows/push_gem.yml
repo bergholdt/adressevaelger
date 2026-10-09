@@ -1,8 +1,6 @@
 name: Push gem
 
-# Publishes to RubyGems.org when a matching version tag is pushed.
-# Trigger: push of tag vX.Y.Z where X.Y.Z == Adressevaelger::VERSION.
-# Does not auto-bump versions; bump intentionally, then tag/release.
+# Publishes to RubyGems.org when a tag vX.Y.Z matching Adressevaelger::VERSION is pushed.
 on:
   push:
     tags:

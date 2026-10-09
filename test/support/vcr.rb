@@ -1,14 +1,7 @@
 # frozen_string_literal: true
 
-# VCR for Adressevælger HTTP.
-#
-# Rules:
-# - Cassettes MUST be recorded against the real HTTP API. Never hand-write them.
-# - Local record / refresh: `VCR_RECORD=all bundle exec rake test`
-# - Local default without VCR_RECORD: `record: :once` (network only if cassette missing).
-# - CI: `record: :none` — replay only; unhandled HTTP / missing cassette fails closed.
-# - Do NOT set allow_http_connections_when_no_cassette.
-# - Secrets are redacted on record (query tokens).
+# VCR for Adressevælger HTTP. Record against the real API; never hand-write cassettes.
+# Local refresh: VCR_RECORD=all. CI uses record: :none. Query tokens are redacted.
 require "vcr"
 require "webmock"
 
